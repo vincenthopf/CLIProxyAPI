@@ -159,7 +159,11 @@ func (e *DevinExecutor) Refresh(ctx context.Context, auth *cliproxyauth.Auth) (*
 	status, err := authService.FetchUserStatus(ctx, sessionToken, deviceSeed)
 	if err != nil {
 		log.Warnf("devin executor: failed to refresh user status for %s: %v", auth.ID, err)
-		return auth, err
+		var statusErr *devinauth.UserStatusError
+		if errors.As(err, &statusErr) && statusErr.Status == http.StatusUnauthorized {
+			return auth, err
+		}
+		return auth, nil
 	}
 
 	updated := auth.Clone()
