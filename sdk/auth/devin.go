@@ -35,9 +35,8 @@ func (a *DevinAuthenticator) Provider() string {
 	return "devin"
 }
 
-// RefreshLead returns nil since Devin OAuth tokens are permanent session tokens.
 func (a *DevinAuthenticator) RefreshLead() *time.Duration {
-	return nil
+	return new(coreauth.DevinQuotaRefreshInterval)
 }
 
 // Login executes the interactive browser-based or headless manual authentication flow for Devin.

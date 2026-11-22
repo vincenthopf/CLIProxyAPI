@@ -370,8 +370,21 @@ func (s *DevinAuthService) FetchUserStatus(ctx context.Context, sessionToken, de
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("devin seat management error (status %d): %s", resp.StatusCode, string(respBytes))
+		return nil, &UserStatusError{Status: resp.StatusCode, Body: string(respBytes)}
 	}
 
 	return ParseGetUserStatusResponse(respBytes)
+}
+
+type UserStatusError struct {
+	Status int
+	Body   string
+}
+
+func (e *UserStatusError) Error() string {
+	return fmt.Sprintf("devin seat management error (status %d): %s", e.Status, e.Body)
+}
+
+func (e *UserStatusError) StatusCode() int {
+	return e.Status
 }
