@@ -1133,6 +1133,8 @@ const CodexOuterRefreshLead = 96 * time.Hour
 // a Sign in with ChatGPT (SIWC) token, matching pi's DEFAULT_OAUTH_MINIMUM_VALIDITY_MS (5 minutes).
 const CodexSIWCRefreshLead = 5 * time.Minute
 
+const DevinQuotaRefreshInterval = 10 * time.Minute
+
 // SIWCEarliestRefreshTime returns the server's lower bound for SIWC token renewal.
 func (a *Auth) SIWCEarliestRefreshTime() (time.Time, bool) {
 	if a == nil || a.Metadata == nil {
@@ -1693,6 +1695,10 @@ func ProviderRefreshLead(provider string, runtime any) *time.Duration {
 	}
 	if provider == "codex" {
 		d := CodexOuterRefreshLead
+		return &d
+	}
+	if provider == "devin" {
+		d := DevinQuotaRefreshInterval
 		return &d
 	}
 	return nil

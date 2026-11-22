@@ -44,6 +44,19 @@ type DevinUserStatus struct {
 // GenerateDeviceFingerprint generates a 732-character hex device fingerprint.
 // When seed is empty, it generates a cryptographically random 732-character hex string per request.
 // When seed is provided, it derives a deterministic 732-character hex fingerprint.
+type UserStatusError struct {
+	Status int
+	Body   string
+}
+
+func (e *UserStatusError) Error() string {
+	return fmt.Sprintf("devin seat management error (status %d): %s", e.Status, e.Body)
+}
+
+func (e *UserStatusError) StatusCode() int {
+	return e.Status
+}
+
 func GenerateDeviceFingerprint(seed string) string {
 	if seed == "" {
 		var b [devinFingerprintHexLen / 2]byte
@@ -370,7 +383,7 @@ func (s *DevinAuthService) FetchUserStatus(ctx context.Context, sessionToken, de
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("devin seat management error (status %d): %s", resp.StatusCode, string(respBytes))
+		return nil, &UserStatusError{Status: resp.StatusCode, Body: string(respBytes)}
 	}
 
 	return ParseGetUserStatusResponse(respBytes)
