@@ -1697,10 +1697,6 @@ func ProviderRefreshLead(provider string, runtime any) *time.Duration {
 		d := CodexOuterRefreshLead
 		return &d
 	}
-	if provider == "devin" {
-		d := DevinQuotaRefreshInterval
-		return &d
-	}
 	return nil
 }
 
